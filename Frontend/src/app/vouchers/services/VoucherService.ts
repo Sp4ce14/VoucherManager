@@ -1,5 +1,7 @@
 import { Injectable } from "@angular/core";
-import { VoucherModel } from "../models/vouchermodel";
+import { VoucherModel } from "../models/VoucherModel";
+
+
 
 @Injectable(
     {providedIn: "root"}
@@ -51,4 +53,11 @@ export class VoucherService {
         return this.MOCK_VOUCHERS;
     }
 
+    public addVoucher(voucher: VoucherModel): void {
+        this.MOCK_VOUCHERS.push(voucher);
+    }
+
+    public getSingleVoucher(index: number): VoucherModel {
+        return this.MOCK_VOUCHERS[index];
+    }
 }

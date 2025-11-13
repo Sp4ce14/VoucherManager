@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { VoucherService } from '../services/VoucherService';
-import { VoucherModel } from '../models/vouchermodel';
+import { VoucherModel } from '../models/VoucherModel';
 
 @Component({
   selector: 'app-show-vouchers',

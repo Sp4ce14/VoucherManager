@@ -5,6 +5,7 @@ import { VouchersRoutingModule } from './vouchers-routing.module';
 import { AddVoucherComponent } from './add-voucher/add-voucher.component';
 import { EditVoucherComponent } from './edit-voucher/edit-voucher.component';
 import { ShowVouchersComponent } from './show-vouchers/show-vouchers.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -15,6 +16,7 @@ import { ShowVouchersComponent } from './show-vouchers/show-vouchers.component';
   ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     VouchersRoutingModule
   ]
 })

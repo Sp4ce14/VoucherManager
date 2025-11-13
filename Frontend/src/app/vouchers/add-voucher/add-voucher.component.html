@@ -1,0 +1,97 @@
+<div class="container mt-4" [formGroup]="voucherForm">
+    <!-- Top section with Date, Customer input and Save button -->
+    <div class="d-flex align-items-end justify-content-between gap-3 flex-wrap mb-5">
+
+        <!-- Date input -->
+        <div class="flex-grow-1" style="max-width: 250px;">
+            <div class="mb-2">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" class="form-control" required formControlName="date">
+            </div>
+        </div>
+
+        <!-- Customer input -->
+        <div class="flex-grow-1" style="max-width: 250px;">
+            <div class="mb-2">
+                <label for="customer" class="form-label">Customer</label>
+                <input type="text" class="form-control" placeholder="Enter customer name" required
+                    formControlName="customer">
+            </div>
+        </div>
+
+        <!-- Save voucher button -->
+        <div class="position-relative" style="top: -10px;">
+            <button class="btn btn-primary" (click)="saveVoucher()">Save</button>
+        </div>
+    </div>
+
+    <!-- Empty space for better layout -->
+    <div style="height:180px;"></div>
+
+    <!-- Section for adding order items -->
+    <div class="d-flex align-items-end justify-content-between gap-3 flex-wrap mt-5 mb-3">
+
+        <!-- Item input -->
+        <div class="flex-grow-1" style="max-width: 250px;">
+            <div class="mb-2">
+                <label for="item" class="form-label">Item</label>
+                <input type="text" class="form-control" placeholder="Enter item name" required formControlName="item">
+            </div>
+        </div>
+
+        <!-- Quantity input -->
+        <div class="flex-grow-1" style="max-width: 150px;">
+            <div class="mb-2">
+                <label for="quantity" class="form-label">Quantity</label>
+                <input type="number" class="form-control" placeholder="0" required formControlName="quantity">
+            </div>
+        </div>
+
+        <!-- Price input -->
+        <div class="flex-grow-1" style="max-width: 150px;">
+            <div class="mb-2">
+                <label for="price" class="form-label">Price</label>
+                <input type="number" class="form-control" placeholder="0.00" required formControlName="price">
+            </div>
+        </div>
+
+        <!-- Add/Update button for items -->
+        <div class="position-relative" style="top: -10px;" *ngIf="editPressed; then update else add">
+            
+        </div>
+        <ng-template #add>
+            <button class="btn btn-success" (click)="addItem()">Add</button>
+        </ng-template>
+        <ng-template #update>
+            <button class="btn btn-success" (click)="updateItem()">Update</button>
+        </ng-template>
+    </div>
+</div>
+
+<!-- Scrollable table to show added items -->
+<div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+    <table class="table table-bordered table-active table-striped table-hover mb-0">
+        <thead class="sticky-top bg-white text-dark">
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Amount</th>
+                <th></th> <!-- Column for Edit/Delete buttons -->
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dynamic rows will be injected here -->
+            <tr *ngFor="let item of items; let i = index">
+                <td>{{item.item}}</td>
+                <td>{{item.quantity}}</td>
+                <td>Rs {{item.price}}</td>
+                <td>Rs {{item.quantity * item.price}}</td>
+                <td class="text-end">
+                    <button class="edit-btn btn btn-primary btn-md me-1" (click)="editItem(i)">Edit</button>
+                    <button class="del-btn btn btn-danger btn-md" (click)="deleteItem(i)">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

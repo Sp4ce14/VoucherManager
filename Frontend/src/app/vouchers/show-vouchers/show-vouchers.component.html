@@ -18,9 +18,9 @@
             <!-- Voucher rows will be inserted dynamically using JS -->
             <ng-container *ngFor="let voucher of vouchers; let i = index">
                 <tr>
-                    <td>{{i}}</td>
-                    <td>{{voucher.customer}}</td>
+                    <td>{{i + 1}}</td>
                     <td>{{voucher.date}}</td>
+                    <td>{{voucher.customer}}</td>
                     <td class="text-end">
                         <!-- Expand/collapse button -->
                         <div *ngIf="voucher.expanded; then collapse else view">

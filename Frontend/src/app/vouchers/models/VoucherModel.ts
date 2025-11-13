@@ -1,4 +1,4 @@
-import { OrderModel } from "./ordermodel";
+import { OrderModel } from "./OrderModel";
 
 
 export interface VoucherModel {
