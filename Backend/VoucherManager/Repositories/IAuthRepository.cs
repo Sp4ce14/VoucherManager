@@ -7,5 +7,6 @@ namespace VoucherManager.Repositories
     {
         Task<AuthResult> SignUpAsync(SignUpDto signUpDto);
         Task<AuthResult> LoginAsync(LoginDto loginDto);
+        Task<AuthResult> TokenRefresh(RefreshReqDto req);
     }
 }

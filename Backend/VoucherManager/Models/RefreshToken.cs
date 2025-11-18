@@ -9,7 +9,7 @@ namespace VoucherManager.Models
 
         public string? UserId { get; set; }
         public string? Token { get; set; }
-        public string? JwtId { get; set; }
+        public string JwtId { get; set; }
         public bool IsRevoked { get; set; } = false;
         public DateTime DateAdded { get; set; }
         public DateTime DateExpire { get; set; }

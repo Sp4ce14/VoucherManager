@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
@@ -16,17 +18,20 @@ namespace VoucherManager.Repositories
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly TokenValidationParameters _tokenValidParams;
 
         public AuthRepository(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             AppDbContext context,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            TokenValidationParameters tokenValidParams)
         {
             _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _tokenValidParams = tokenValidParams;
         }
         public async Task<AuthResult> SignUpAsync(SignUpDto signUpDto)
         {
@@ -76,7 +81,7 @@ namespace VoucherManager.Repositories
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(authClaims),
-                Expires = DateTime.UtcNow.AddMinutes(15),
+                Expires = DateTime.UtcNow.AddSeconds(8460),
                 IssuedAt = DateTime.UtcNow,
                 Issuer = _configuration["JWT:Issuer"],
                 Audience = _configuration["JWT:Audience"],
@@ -97,6 +102,34 @@ namespace VoucherManager.Repositories
             {
                 Token = token,
                 RefreshToken = refreshToken.Token
+            };
+        }
+        public async Task<AuthResult> TokenRefresh(RefreshReqDto req)
+        {
+            var tokenHandler = new JsonWebTokenHandler();
+            var tokenValid = await tokenHandler.ValidateTokenAsync(req.Token, _tokenValidParams);
+            if (tokenValid.Exception is SecurityTokenExpiredException)
+            {
+                var token = tokenHandler.ReadJsonWebToken(req.Token);
+                var jti = token.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti)?.Value;
+                var refreshTokenExists = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == req.RefreshToken);
+                if (refreshTokenExists == null || refreshTokenExists.IsRevoked || refreshTokenExists.JwtId != jti || refreshTokenExists.DateExpire < DateTime.UtcNow)
+                { 
+                    return new()
+                    {
+                        Error = "Invalid Refresh Token"
+                    };
+                }
+                refreshTokenExists.IsRevoked = true;
+                await _context.SaveChangesAsync();
+                var userId = tokenValid.ClaimsIdentity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+                var user = await _userManager.FindByIdAsync(userId);
+                var info = await CreateTokenAsync(user);
+                return info;
+            }
+            return new()
+            {
+                Error = "Access Token Invalid or not expired"
             };
         }
     }

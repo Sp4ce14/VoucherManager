@@ -9,11 +9,22 @@ using VoucherManager.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+var tokenValidParams = new TokenValidationParameters()
+{
+    ValidAudience = builder.Configuration["JWT:Audience"],
+    ValidIssuer = builder.Configuration["JWT:Issuer"],
+    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"])),
+    ValidateAudience = true,
+    ValidateIssuer = true,
+    ValidateLifetime = true,
+    ValidateIssuerSigningKey = true,
+    ClockSkew = TimeSpan.Zero
+};
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton(tokenValidParams);
 builder.Services.AddScoped<IVouchersRepository, VouchersRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -32,16 +43,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.SaveToken = true;
     options.RequireHttpsMetadata = true;
-    options.TokenValidationParameters = new TokenValidationParameters()
-    {
-        ValidAudience = builder.Configuration["JWT:Audience"],
-        ValidIssuer = builder.Configuration["JWT:Issuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"])),
-        ValidateAudience = true,
-        ValidateIssuer = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true
-    };
+    options.TokenValidationParameters = tokenValidParams;
 });
 builder.Services.AddAuthorization();
 var app = builder.Build();

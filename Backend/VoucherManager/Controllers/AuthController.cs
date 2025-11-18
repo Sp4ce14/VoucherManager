@@ -41,5 +41,15 @@ namespace VoucherManager.Controllers
             }
             return Ok(result);
         }
+        [HttpPost("Refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshReqDto req)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var x = await _authRepository.TokenRefresh(req);
+            return Ok(x);
+        }
     }
 }
