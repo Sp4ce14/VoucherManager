@@ -42,6 +42,5 @@ export class EditVoucherComponent extends VoucherBase {
         this.router.navigate(['/vouchers/show-vouchers'])
       }
     }
-    confirm
   }
 }

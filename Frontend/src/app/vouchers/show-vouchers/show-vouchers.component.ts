@@ -18,22 +18,19 @@ export class ShowVouchersComponent implements OnInit {
   }
 
   public toggleVoucher(index: number): void {
-    for (let i = 0; i < this.vouchers.length; i++) {
-      if (i == index) {
-        if (this.vouchers[i].expanded) {
-          this.vouchers[i].expanded = false;
-        }
-        else {
-          this.vouchers[i].expanded = true;
-        }
-      }
+
+    if (this.vouchers[index].expanded) {
+      this.vouchers[index].expanded = false;
+    }
+    else {
+      this.vouchers[index].expanded = true;
     }
   }
 
   public deleteVoucher(index: number): void {
     if (confirm('Are you sure you want to delete this voucher?')) {
-  this.vouchers.splice(index, 1);
-}
+      this.vouchers.splice(index, 1);
+    }
   }
 }
 
