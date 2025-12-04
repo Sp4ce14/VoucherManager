@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { VoucherService } from '../services/VoucherService';
+import { VoucherService } from '../services/voucher-service';
 import { FormBuilder } from '@angular/forms';
 import { VoucherBase } from '../voucher-base';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,16 +18,16 @@ export class EditVoucherComponent extends VoucherBase {
 
   override ngOnInit(): void {
     this.voucherId = <number><unknown>this.route.snapshot.paramMap.get('id')!;
-    this.loadVoucher();
+    // this.loadVoucher();
   }
 
-  public loadVoucher(): void {
-    let currentVoucher = this.voucherService.getSingleVoucher(this.voucherId);
-    this.voucherForm.patchValue(currentVoucher);
-    for (let order of currentVoucher.orders) {
-      this.items.push(order);
-    }
-  }
+  // public loadVoucher(): void {
+  //   let currentVoucher = this.voucherService.getSingleVoucher(this.voucherId);
+  //   this.voucherForm.patchValue(currentVoucher);
+  //   for (let order of currentVoucher.orders) {
+  //     this.items.push(order);
+  //   }
+  // }
 
 
   public override saveVoucher(): void {
@@ -38,7 +38,7 @@ export class EditVoucherComponent extends VoucherBase {
           customer: this.voucherForm.get('customer')?.value,
           orders: this.items
         }
-        this.voucherService.MOCK_VOUCHERS[this.voucherId] = updatedVoucher;
+        // this.voucherService.MOCK_VOUCHERS[this.voucherId] = updatedVoucher;
         this.router.navigate(['/vouchers/show-vouchers'])
       }
     }

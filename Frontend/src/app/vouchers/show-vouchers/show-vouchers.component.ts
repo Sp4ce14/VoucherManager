@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { VoucherService } from '../services/VoucherService';
+import { VoucherService } from '../services/voucher-service';
 import { VoucherModel } from '../models/VoucherModel';
 
 @Component({
@@ -18,7 +18,6 @@ export class ShowVouchersComponent implements OnInit {
   }
 
   public toggleVoucher(index: number): void {
-
     if (this.vouchers[index].expanded) {
       this.vouchers[index].expanded = false;
     }

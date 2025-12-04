@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { VoucherService } from '../services/VoucherService';
+import { VoucherService } from '../services/voucher-service';
 import { VoucherBase } from '../voucher-base';
 import { Router } from '@angular/router';
 
@@ -26,7 +26,7 @@ export class AddVoucherComponent extends VoucherBase {
           customer: this.voucherForm.get('customer')?.value,
           orders: this.items
         }
-        this.voucherService.addVoucher(voucher);
+        // this.voucherService.addVoucher(voucher);
         this.router.navigate(['/vouchers/show-vouchers'])
       }
     }

@@ -7,6 +7,8 @@ import { VouchersModule } from './vouchers/vouchers.module';
 import { SharedModule } from './shared/shared.module';
 import { PrivacycompComponent } from './privacycomp/privacycomp.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { AuthModule } from './auth/auth.module';
 
 @NgModule({
   declarations: [
@@ -17,8 +19,10 @@ import { ReactiveFormsModule } from '@angular/forms';
     BrowserModule,
     AppRoutingModule,
     VouchersModule,
+    AuthModule,
     SharedModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

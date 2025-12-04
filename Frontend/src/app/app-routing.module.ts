@@ -4,8 +4,9 @@ import { PrivacycompComponent } from './privacycomp/privacycomp.component';
 
 const routes: Routes = [
   {path: 'vouchers', loadChildren: () => import('./vouchers/vouchers.module').then(m => m.VouchersModule)},
+  {path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)},
+  {path: 'privacy', component: PrivacycompComponent},
   {path: '', redirectTo: 'vouchers', pathMatch: "full"},
-  {path: 'privacy', component: PrivacycompComponent}
 ];
 
 @NgModule({

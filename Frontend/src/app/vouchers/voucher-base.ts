@@ -1,5 +1,5 @@
 import { AbstractControl, FormBuilder, FormGroup } from "@angular/forms";
-import { VoucherService } from "./services/VoucherService";
+import { VoucherService } from "./services/voucher-service";
 import { OrderModel } from "./models/OrderModel";
 import { Directive, OnInit } from "@angular/core";
 
@@ -45,8 +45,6 @@ export abstract class VoucherBase implements OnInit {
       this._quantity.reset();
       this._price.reset();
     }
-    console.log(this.items);
-    console.log(this._item);
   }
 
   public editItem(index: number): void {
