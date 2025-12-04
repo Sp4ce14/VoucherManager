@@ -14,35 +14,25 @@ namespace VoucherManager.Repositories
             _context = context;
         }
 
-        public async Task<List<VoucherDto>> GetAllAsync()
+        public async Task<List<VoucherDto>> GetAllAsync(string? userId)
         {
-            List<VoucherDto> vouchers = await _context.Vouchers.Select(v => new VoucherDto()
+            var query = _context.Vouchers.AsQueryable();
+            if (!string.IsNullOrEmpty(userId))
             {
-                Customer = v.Customer,
-                Date = v.Date,
-                Orders = v.Orders.Select(o => new OrderDto()
-                {
-                    Item = o.Item,
-                    Price = o.Price,
-                    Quantity = o.Quantity
-                }).ToList()
-            }).ToListAsync();
+                query = query.Where(v => v.UserId == userId);
+            }
+            var vouchers = await VoucherQuery(query).ToListAsync();
             return vouchers;
         }
 
-        public async Task<VoucherDto> GetVoucherAsync(int? id)
+        public async Task<VoucherDto> GetVoucherAsync(int? id, string? userId)
         {
-            VoucherDto? voucher = await _context.Vouchers.Where(v => v.Id == id).Select(v => new VoucherDto()
-            {
-                Customer = v.Customer,
-                Date = v.Date,
-                Orders = v.Orders.Select(o => new OrderDto()
-                {
-                    Item = o.Item,
-                    Price = o.Price,
-                    Quantity = o.Quantity
-                }).ToList()
-            }).FirstOrDefaultAsync();
+            var query = _context.Vouchers.AsQueryable();
+            if (!string.IsNullOrEmpty(userId))
+            {   
+                query = query.Where(v => v.Id == id && v.UserId == userId);
+            }
+            var voucher = await VoucherQuery(query).SingleOrDefaultAsync();
             if (voucher == null)
             {
                 return new VoucherDto()
@@ -53,27 +43,31 @@ namespace VoucherManager.Repositories
             return voucher;
         }
 
-        public async Task<Voucher> AddAsync(VoucherDto voucher)
+        public async Task<Voucher> AddAsync(VoucherDto voucher, string userId)
         {
-            var result = new Voucher()
-            {
-                Customer = voucher.Customer,
-                Date = voucher.Date,
-                Orders = voucher.Orders.Select(o => new Order()
+             var result = new Voucher()
                 {
-                    Price = o.Price,
-                    Quantity = o.Quantity,
-                    Item = o.Item
-                }).ToList()
-
-            };
+                    UserId = userId,
+                    Customer = voucher.Customer,
+                    Date = voucher.Date,
+                    Orders = voucher.Orders.Select(o => new Order()
+                    {
+                        Price = o.Price,
+                        Quantity = o.Quantity,
+                        Item = o.Item
+                    }).ToList()
+                };
             await _context.AddAsync(result);
             await _context.SaveChangesAsync();
             return result;
         }
-        public async Task<VoucherDto> EditAsync(VoucherDto voucher, int? id)
+        public async Task<VoucherDto> EditAsync(VoucherDto voucher, int? id, string? userId)
         {
-            var voucherToEdit = await _context.Vouchers.Include(o => o.Orders).FirstOrDefaultAsync(x => x.Id == id);
+            Voucher? voucherToEdit = null;
+            if (userId == null)
+            {
+                voucherToEdit = await _context.Vouchers.Include(o => o.Orders).FirstOrDefaultAsync(x => x.Id == id && (string.IsNullOrEmpty(userId) || x.UserId == userId));
+            }
             if (voucherToEdit == null)
             {
                 return new VoucherDto()
@@ -113,6 +107,21 @@ namespace VoucherManager.Repositories
             {
                 Error = null
             };
+        }
+        private IQueryable<VoucherDto> VoucherQuery(IQueryable<Voucher> query)
+        {
+            return query.Select(v => new VoucherDto
+            {
+                Id = v.Id,
+                Customer = v.Customer,
+                Date = v.Date,
+                Orders = v.Orders.Select(o => new OrderDto
+                {
+                    Item = o.Item,
+                    Price = o.Price,
+                    Quantity = o.Quantity
+                }).ToList()
+            }).AsNoTracking();
         }
     }
 }

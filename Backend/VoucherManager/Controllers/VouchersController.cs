@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Security.Claims;
 using VoucherManager.Dtos;
 using VoucherManager.Models;
 using VoucherManager.Repositories;
@@ -23,7 +22,13 @@ namespace VoucherManager.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllVouchers()
         {
-            List<VoucherDto> vouchers = await _vouchersRepository.GetAllAsync();
+            var userRole = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+            string? userId = null;
+            if (userRole == "user")
+            {
+                userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            }
+            List<VoucherDto> vouchers = await _vouchersRepository.GetAllAsync(userId);
             return Ok(vouchers);
         }
 
@@ -34,14 +39,20 @@ namespace VoucherManager.Controllers
             {
                 return BadRequest();
             }
-            VoucherDto voucher = await _vouchersRepository.GetVoucherAsync(id);
+            var userRole = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+            string? userId = null;
+            if (userRole == "user")
+            {
+                userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            }
+            VoucherDto voucher = await _vouchersRepository.GetVoucherAsync(id, userId);
             if (voucher.Error != null)
             {
                 return NotFound(voucher.Error);
             }
             return Ok(voucher);
         }
-
+        [Authorize(Roles = "user")]
         [HttpPost]
         public async Task<IActionResult> AddVoucher([FromBody] VoucherDto voucher)
         {
@@ -49,7 +60,8 @@ namespace VoucherManager.Controllers
             {
                 return BadRequest("Invalid entry");
             }
-            var result = await _vouchersRepository.AddAsync(voucher);
+            var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            var result = await _vouchersRepository.AddAsync(voucher, userId);
 
             return CreatedAtAction(nameof(GetVoucher), new { id = result.Id }, voucher);
         }
@@ -65,7 +77,13 @@ namespace VoucherManager.Controllers
             {
                 return BadRequest("Invalid entry");
             }
-            var result = await _vouchersRepository.EditAsync(voucher, id);
+            var userRole = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+            string? userId = null;
+            if (userRole == "user")
+            {
+                userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            }
+            var result = await _vouchersRepository.EditAsync(voucher, id, userId);
             if (result.Error != null)
             {
                 return BadRequest(result.Error);
@@ -73,6 +91,7 @@ namespace VoucherManager.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVoucher([FromRoute] int? id)
         {

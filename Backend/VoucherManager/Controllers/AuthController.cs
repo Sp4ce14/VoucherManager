@@ -25,6 +25,10 @@ namespace VoucherManager.Controllers
                 return BadRequest();
             }
             var result = await _authRepository.SignUpAsync(user);
+            if (result.Error != null)
+            {
+                return BadRequest(result.Error);
+            }
             return Ok(result);
         }
         [HttpPost("Login")]

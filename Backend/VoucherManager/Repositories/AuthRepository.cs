@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -40,7 +39,20 @@ namespace VoucherManager.Repositories
                 UserName = signUpDto.UserName,
                 Email = signUpDto.Email,
             };
-            await _userManager.CreateAsync(user, signUpDto.Password);
+            var result = await _userManager.CreateAsync(user, signUpDto.Password);
+            if (!result.Succeeded)
+            {
+                string err = "";
+                foreach(var error in result.Errors)
+                {
+                    err = err + error.Description;
+                }
+                return new()
+                {
+                    Error = err
+                };
+            }
+            await _userManager.AddToRoleAsync(user, "user");
             var info = await CreateTokenAsync(user);
             return info;
         }
@@ -60,7 +72,7 @@ namespace VoucherManager.Repositories
             {
                 return new AuthResult()
                 {
-                    Error = "Failed"
+                    Error = "Invalid Password"
                 };
             }
             var info = await CreateTokenAsync(user);
@@ -75,8 +87,13 @@ namespace VoucherManager.Repositories
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, jti)
+                new Claim(JwtRegisteredClaimNames.Jti, jti) 
             };
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, role));
+            }
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
@@ -122,7 +139,7 @@ namespace VoucherManager.Repositories
                 }
                 refreshTokenExists.IsRevoked = true;
                 await _context.SaveChangesAsync();
-                var userId = tokenValid.ClaimsIdentity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+                var userId = token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
                 var user = await _userManager.FindByIdAsync(userId);
                 var info = await CreateTokenAsync(user);
                 return info;
