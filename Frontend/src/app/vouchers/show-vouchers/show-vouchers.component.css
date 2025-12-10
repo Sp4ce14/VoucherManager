@@ -1,9 +1,0 @@
-.details-container {
-        max-height: 150px; /* Limit height to avoid long content overflow */
-        overflow-y: auto; /* Adds vertical scrollbar when content exceeds height */
-        border: 1px solid #ccc; /* Light gray border */
-        padding: 5px; /* Inner spacing */
-    }
-.btn {
-    margin-right: 5px;
-}    
