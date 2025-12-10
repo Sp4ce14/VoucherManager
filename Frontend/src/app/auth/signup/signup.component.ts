@@ -53,20 +53,19 @@ export class SignupComponent implements OnInit {
       else {
         this.validationErr = "";
       }
-      console.log(x);
   });
   }
 
-  // public login(): void {
-  //   if (!(this._userName?.errors && this._password?.errors))
-  //   {
-  //     this.authService.signUp(this.signUpForm.value).subscribe({
-  //     next: res => console.log(res),
-  //     error: err => this.validationErr = err.error
-  //   });
-  //   }
-  //   else {
-  //     this.validationErr = "Please Enter some details.";
-  //   }
-  // }
+  public register(): void {
+    if (!this._password?.errors && !this._userName?.errors && !this._confirmPassword?.errors && !this._email?.errors && this._confirmPassword != this._password)
+    {
+      this.authService.signUp(this.signUpForm.value).subscribe({
+      next: res => {this.authService.setToken(res.token); console.log(res.token);},
+      error: err => {this.validationErr = err.error; console.log(err.error)}
+    });
+    }
+    else {
+      this.validationErr = "Please Enter some details.";
+    }
+  }
 }
