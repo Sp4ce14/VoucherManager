@@ -5,9 +5,10 @@ import {
   HttpEvent,
   HttpInterceptor,
   HttpHeaders,
-  HttpResponse
+  HttpResponse,
+  HttpErrorResponse
 } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { catchError, Observable, switchMap, tap, throwError } from 'rxjs';
 import { AuthService } from './vouchers/services/auth-service';
 
 @Injectable()
@@ -19,25 +20,23 @@ export class TokenInterceptor implements HttpInterceptor {
     const newReq: any = request.clone({ headers: new HttpHeaders({ "Authorization": `Bearer ${this.authService.getToken()}` }) })
     console.log(newReq);
     return next.handle(newReq).pipe(
-      tap({
-        next: (event) => {
-          if (event instanceof HttpResponse) {
-            if (event.status == 401) {
-              this.authService.refreshReq().subscribe({
-                next: res => {
-                  console.log(res);
-                  this.authService.setToken(res.token);
-                  const afterRefReq: any = request.clone({ headers: new HttpHeaders({ "Authorization": `Bearer ${this.authService.getToken()}` }) })
-                  return next.handle(afterRefReq);
-                },
-                error: err => {
-                  console.log(err);
-                  this.authService.logOut();
-                }
-              });;
-            }
-          }
+      catchError((err: HttpErrorResponse) => {
+        if (err.status == 401)
+        {
+          return this.authService.refreshReq().pipe(
+            switchMap(res => {
+              this.authService.setToken(res.token);
+              const refreshReq: any = request.clone({ headers: new HttpHeaders({ "Authorization": `Bearer ${this.authService.getToken()}` }) })
+              return next.handle(refreshReq);
+            }),
+            catchError((innerErr: HttpErrorResponse) => {
+              this.authService.logOut();
+              alert("You have been logged out, Please login again");
+              return throwError(() => {innerErr});
+            })
+          )
         }
+        return throwError(() => err)
       })
     );
   }

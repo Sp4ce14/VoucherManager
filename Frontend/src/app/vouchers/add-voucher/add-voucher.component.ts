@@ -26,7 +26,7 @@ export class AddVoucherComponent extends VoucherBase {
           customer: this.voucherForm.get('customer')?.value,
           orders: this.items
         }
-        // this.voucherService.addVoucher(voucher);
+        this.voucherService.addVoucher(voucher).subscribe(x => console.log(x));
         this.router.navigate(['/vouchers/show-vouchers'])
       }
     }

@@ -31,7 +31,7 @@ export abstract class VoucherBase implements OnInit {
   abstract ngOnInit(): void;
 
   formInit(): void {
-    
+
   }
 
   public addItem(): void {
@@ -72,5 +72,5 @@ export abstract class VoucherBase implements OnInit {
   }
 
   abstract saveVoucher(): void;
-  
+
 }

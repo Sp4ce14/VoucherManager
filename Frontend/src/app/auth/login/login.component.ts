@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/vouchers/services/auth-service';
 
 @Component({
@@ -13,7 +14,7 @@ export class LoginComponent implements OnInit {
   public _userName: AbstractControl | null; 
   public _password: AbstractControl | null;
   public validationErr: string;
-  constructor(private _formbuilder: FormBuilder, private authService: AuthService) {}
+  constructor(private _formbuilder: FormBuilder, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.loginForm = this._formbuilder.group(
@@ -47,7 +48,7 @@ export class LoginComponent implements OnInit {
     if (!this._userName?.errors && !this._password?.errors)
     {
       this.authService.login(this.loginForm.value).subscribe({
-      next: res => {this.authService.setToken(res.token); console.log(res)},
+      next: res => {this.authService.setToken(res.token); console.log(res); this.router.navigate([''])},
       error: err => {this.validationErr = err.error}
     });
     }

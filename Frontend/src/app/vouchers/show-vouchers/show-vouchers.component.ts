@@ -10,11 +10,12 @@ import { VoucherModel } from '../models/VoucherModel';
 export class ShowVouchersComponent implements OnInit {
 
   public vouchers: VoucherModel[];
-  constructor(private voucherService: VoucherService) {
-    this.vouchers = this.voucherService.getVouchers();
+  constructor(private voucherService: VoucherService) { 
+    this.voucherService.getVouchers().subscribe(vouchers => this.vouchers = vouchers);
   }
 
   ngOnInit(): void {
+    
   }
 
   public toggleVoucher(index: number): void {
@@ -28,6 +29,8 @@ export class ShowVouchersComponent implements OnInit {
 
   public deleteVoucher(index: number): void {
     if (confirm('Are you sure you want to delete this voucher?')) {
+      console.log(this.vouchers[index]);
+      this.voucherService.deleteVoucher(this.vouchers[index].id).subscribe(x => console.log(x));
       this.vouchers.splice(index, 1);
     }
   }

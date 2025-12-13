@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-             "baseHref": "/",
+            "baseHref": "/",
             "outputPath": "dist/voucher-manager",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -70,6 +70,12 @@
           "defaultConfiguration": "production"
         },
         "serve": {
+          "options": {
+            "ssl": true,
+            "sslCert": "localhost.crt",
+            "sslKey": "localhost.key",
+            "port": 4200
+          },
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {

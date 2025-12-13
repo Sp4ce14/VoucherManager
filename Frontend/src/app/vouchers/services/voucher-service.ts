@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { VoucherModel } from "../models/VoucherModel";
 import { HttpClient } from "@angular/common/http";
+import { catchError, Observable } from "rxjs";
 
 
 @Injectable(
@@ -8,14 +9,21 @@ import { HttpClient } from "@angular/common/http";
 )
 
 export class VoucherService {
-    constructor(private http: HttpClient )
-    {
+    private baseUrl = "https://localhost:7175/api/";
 
+    constructor(private http: HttpClient ) {}
+
+    public getVouchers(): Observable<any> {
+        return this.http.get(this.baseUrl + "Vouchers");
     }
-    private vouchers: VoucherModel[];
-
-    public getVouchers(): VoucherModel[] {
-        this.http.get<VoucherModel[]>("https://localhost:7175/api/Vouchers/").subscribe(x => this.vouchers = x);
-        return this.vouchers;
+    public addVoucher(voucherToSave: VoucherModel): Observable<any> {
+        return this.http.post(this.baseUrl + "Vouchers", voucherToSave);
+    }
+    public deleteVoucher(voucherId: number): Observable<any> {
+        return this.http.delete(this.baseUrl  + `Vouchers/${voucherId}`);
+    }
+    public getVoucher(voucherId: number): Observable<any>
+    {
+        return this.http.get(this.baseUrl + `Vouchers/${voucherId}`);
     }
 }
