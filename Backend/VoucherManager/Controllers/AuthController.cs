@@ -53,6 +53,24 @@ namespace VoucherManager.Controllers
             await SetRefreshCookie(result.RefreshToken);
             return Ok(new { result.Token });
         }
+        [HttpGet("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var refTokenToRevoke = Request.Cookies["refresh"];
+            if (refTokenToRevoke == null)
+            {
+                return BadRequest("No refresh cookie sent");
+            }
+            var refToken = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == refTokenToRevoke);
+            if (refToken == null)
+            {
+                return BadRequest("Invalid cookie sent");
+            }
+            Response.Cookies.Delete("refresh");
+            refToken.IsRevoked = true;
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
         [HttpPost("Refresh")]
         public async Task<IActionResult> Refresh([FromBody] RefreshReqDto expiredReq)
         {

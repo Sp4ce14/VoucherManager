@@ -20,7 +20,7 @@ export class AuthService {
   public roles$ = this.roleSubject.asObservable();
 
   public login(loginDetails: LoginModel): Observable<any> {
-    return this.http.post(this.baseUrl + "Auth/Login", loginDetails, { withCredentials: true });
+    return this.http.post(this.baseUrl + "Auth/Login", loginDetails);
   }
 
   public signUp(signUpDetails: SignupModel): Observable<any> {
@@ -33,7 +33,8 @@ export class AuthService {
   }
   public logOut(): void {
     localStorage.removeItem("token");
-    //todo sending logout request to logout api endpoint
+    this.http.get(this.baseUrl + "Auth/Logout", {withCredentials: true});
+    this.loadRoles();
     this.router.navigate(['Auth/Login']);
     alert("You have been logged out, Please Login again.")
   }

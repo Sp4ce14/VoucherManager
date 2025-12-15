@@ -82,6 +82,10 @@ namespace VoucherManager.Controllers
             if (userRole == "user")
             {
                 userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return BadRequest("User couldn't be extracted from claims.");
+                }
             }
             var result = await _vouchersRepository.EditAsync(voucher, id, userId);
             if (result.Error != null)
