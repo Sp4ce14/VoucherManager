@@ -1,9 +1,6 @@
-﻿  using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
 using VoucherManager.Data;
 using VoucherManager.Dtos;
 using VoucherManager.Repositories;
@@ -71,6 +68,7 @@ namespace VoucherManager.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+        [Authorize]
         [HttpPost("Refresh")]
         public async Task<IActionResult> Refresh([FromBody] RefreshReqDto expiredReq)
         {
