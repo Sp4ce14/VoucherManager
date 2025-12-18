@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { VoucherService } from '../services/voucher-service';
+import { VoucherService } from '../../services/voucher-service';
 import { VoucherBase } from '../voucher-base';
 import { Router } from '@angular/router';
 

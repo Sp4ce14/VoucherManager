@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from 'src/app/vouchers/services/auth-service';
+import { AuthService } from 'src/app/services/auth-service';
 
 @Component({
   selector: 'app-signup',

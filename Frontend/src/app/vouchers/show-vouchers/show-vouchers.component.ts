@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { VoucherService } from '../services/voucher-service';
+import { VoucherService } from '../../services/voucher-service';
 import { VoucherModel } from '../models/VoucherModel';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-show-vouchers',
@@ -10,7 +11,7 @@ import { VoucherModel } from '../models/VoucherModel';
 export class ShowVouchersComponent implements OnInit {
 
   public vouchers: VoucherModel[];
-  constructor(private voucherService: VoucherService) { 
+  constructor(private voucherService: VoucherService, private router: Router) { 
     this.voucherService.getVouchers().subscribe(vouchers => this.vouchers = vouchers);
   }
 
@@ -33,6 +34,10 @@ export class ShowVouchersComponent implements OnInit {
       this.voucherService.deleteVoucher(this.vouchers[index].id).subscribe(x => console.log(x));
       this.vouchers.splice(index, 1);
     }
+  }
+
+  public editVoucher(index: number): void {
+    this.router.navigate(['vouchers/edit-voucher/' + this.vouchers[index].id]);
   }
 }
 

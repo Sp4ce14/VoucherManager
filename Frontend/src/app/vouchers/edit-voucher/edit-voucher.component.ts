@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { VoucherService } from '../services/voucher-service';
+import { VoucherService } from '../../services/voucher-service';
 import { FormBuilder } from '@angular/forms';
 import { VoucherBase } from '../voucher-base';
 import { ActivatedRoute, Router } from '@angular/router';
+import { VoucherModel } from '../models/VoucherModel';
 
 @Component({
   selector: 'app-edit-voucher',
@@ -10,7 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./edit-voucher.component.css']
 })
 export class EditVoucherComponent extends VoucherBase {
-
+  private currentVoucher: VoucherModel;
   private voucherId: number;
   constructor(public formBuilder1: FormBuilder, public voucherService1: VoucherService, public route: ActivatedRoute, public router: Router) {
     super(formBuilder1, voucherService1,);
@@ -18,16 +19,20 @@ export class EditVoucherComponent extends VoucherBase {
 
   override ngOnInit(): void {
     this.voucherId = <number><unknown>this.route.snapshot.paramMap.get('id')!;
-    // this.loadVoucher();
   }
 
-  // public loadVoucher(): void {
-  //   let currentVoucher = this.voucherService.getSingleVoucher(this.voucherId);
-  //   this.voucherForm.patchValue(currentVoucher);
-  //   for (let order of currentVoucher.orders) {
-  //     this.items.push(order);
-  //   }
-  // }
+  public loadVoucher(): void {
+    this.voucherService.getVoucher(this.voucherId).subscribe(
+      {
+        next: voucher => this.currentVoucher = voucher,
+        error: err => console.log(err)
+      }
+    );
+    this.voucherForm.patchValue(this.currentVoucher);
+    for (let order of this.currentVoucher.orders) {
+      this.items.push(order);
+    }
+  }
 
 
   public override saveVoucher(): void {
@@ -38,7 +43,12 @@ export class EditVoucherComponent extends VoucherBase {
           customer: this.voucherForm.get('customer')?.value,
           orders: this.items
         }
-        // this.voucherService.MOCK_VOUCHERS[this.voucherId] = updatedVoucher;
+        this.voucherService.editVoucher(updatedVoucher, this.voucherId).subscribe(
+          {
+            next: res => alert("Voucher edited successfully"),
+            error: err => console.log(err)
+          }
+          );
         this.router.navigate(['/vouchers/show-vouchers'])
       }
     }

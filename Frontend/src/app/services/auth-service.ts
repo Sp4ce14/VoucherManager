@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { LoginModel } from '../models/LoginModel';
+import { LoginModel } from '../vouchers/models/LoginModel';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { SignupModel } from '../models/SignupModel';
+import { SignupModel } from '../vouchers/models/SignupModel';
 import { jwtDecode } from 'jwt-decode';
-import { jwtModel } from '../models/jwtModel';
+import { jwtModel } from '../vouchers/models/jwtModel';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -35,8 +35,8 @@ export class AuthService {
     localStorage.removeItem("token");
     this.http.get(this.baseUrl + "Auth/Logout", {withCredentials: true});
     this.loadRoles();
-    this.router.navigate(['Auth/Login']);
-    alert("You have been logged out, Please Login again.")
+    this.router.navigate(['/login']);
+    alert("You have been logged out, Please Login again.");
   }
 
   private loadRoles(): void {
@@ -49,11 +49,12 @@ export class AuthService {
     }
   }
   public refreshReq(): Observable<any> {
-    return this.http.post(this.baseUrl + "Auth/Refresh", { Token: localStorage.getItem('token') }, { withCredentials: true })
+    return this.http.post(this.baseUrl + "Auth/Refresh", { withCredentials: true })
   }
 
-  public getToken(): string | null {
-    return localStorage.getItem('token');
+  public getToken(): string {
+    var token = localStorage.getItem('token');
+    return token != null ?  token : '';
   }
 
   public hasRole(role: string): boolean {

@@ -37,7 +37,7 @@
                             </div>
                         </ng-template>
                         <!-- Edit button -->
-                        <div class="edit-btn btn btn-primary w-25" [routerLink]="['/vouchers/edit-voucher', i]">Edit</div>
+                        <div class="edit-btn btn btn-primary w-25" (click)="editVoucher(i)">Edit</div>
                         <!-- Delete button -->
                         <div class="del-btn btn btn-danger w-25" (click)="deleteVoucher(i)">Delete</div>
                     </td>

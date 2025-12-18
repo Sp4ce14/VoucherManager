@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
-import { VoucherModel } from "../models/VoucherModel";
+import { VoucherModel } from "../vouchers/models/VoucherModel";
 import { HttpClient } from "@angular/common/http";
-import { catchError, Observable } from "rxjs";
+import { Observable } from "rxjs";
 
 
 @Injectable(
@@ -25,5 +25,8 @@ export class VoucherService {
     public getVoucher(voucherId: number): Observable<any>
     {
         return this.http.get(this.baseUrl + `Vouchers/${voucherId}`);
+    }
+    public editVoucher(updatedVoucher: VoucherModel, voucherId: number): Observable<any> {
+        return this.http.put(this.baseUrl + `Vouchers/${voucherId}`, updatedVoucher);
     }
 }
