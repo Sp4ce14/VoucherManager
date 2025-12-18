@@ -85,9 +85,9 @@ namespace VoucherManager.Repositories
             var jti = Guid.NewGuid().ToString();
             var authClaims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
-                new Claim(ClaimTypes.NameIdentifier, user.Id ?? string.Empty),
-                new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, jti) 
             };
             var roles = await _userManager.GetRolesAsync(user);
@@ -99,7 +99,7 @@ namespace VoucherManager.Repositories
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(authClaims),
-                Expires = DateTime.UtcNow.AddSeconds(8460),
+                Expires = DateTime.UtcNow.AddSeconds(10),
                 IssuedAt = DateTime.UtcNow,
                 Issuer = _configuration["JWT:Issuer"],
                 Audience = _configuration["JWT:Audience"],
@@ -142,7 +142,7 @@ namespace VoucherManager.Repositories
                 }
                 refreshTokenExists.IsRevoked = true;
                 await _context.SaveChangesAsync();
-                var userId = token.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+                var userId = token.Claims.FirstOrDefault(x => x.Type == "nameid")?.Value;
                 var user = await _userManager.FindByIdAsync(userId);
                 var info = await CreateTokenAsync(user);
                 return info;

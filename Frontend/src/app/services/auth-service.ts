@@ -20,11 +20,11 @@ export class AuthService {
   public roles$ = this.roleSubject.asObservable();
 
   public login(loginDetails: LoginModel): Observable<any> {
-    return this.http.post(this.baseUrl + "Auth/Login", loginDetails);
+    return this.http.post(this.baseUrl + "Auth/Login", loginDetails, {withCredentials: true});
   }
 
   public signUp(signUpDetails: SignupModel): Observable<any> {
-    return this.http.post(this.baseUrl + "Auth/SignUp", signUpDetails);
+    return this.http.post(this.baseUrl + "Auth/SignUp", signUpDetails, {withCredentials: true});
   }
 
   public setToken(token: string): void {
@@ -49,7 +49,7 @@ export class AuthService {
     }
   }
   public refreshReq(): Observable<any> {
-    return this.http.post(this.baseUrl + "Auth/Refresh", { withCredentials: true })
+    return this.http.post(this.baseUrl + "Auth/Refresh", {token: this.getToken()}, { withCredentials: true })
   }
 
   public getToken(): string {

@@ -68,13 +68,12 @@ namespace VoucherManager.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
-        [Authorize]
         [HttpPost("Refresh")]
         public async Task<IActionResult> Refresh([FromBody] RefreshReqDto expiredReq)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
             var refreshToken = Request.Cookies["refresh"];
             if (refreshToken == null)
