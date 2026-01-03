@@ -32,7 +32,7 @@ namespace VoucherManager.Repositories
             {   
                 query = query.Where(v => v.Id == id && v.UserId == userId);
             }
-            var voucher = await VoucherQuery(query).SingleOrDefaultAsync();
+            var voucher = await VoucherQuery(query).Where(v => v.Id == id).SingleOrDefaultAsync();
             if (voucher == null)
             {
                 return new VoucherDto()
@@ -63,11 +63,7 @@ namespace VoucherManager.Repositories
         }
         public async Task<VoucherDto> EditAsync(VoucherDto voucher, int? id, string? userId)
         {
-            Voucher? voucherToEdit = null;
-            if (userId == null)
-            {
-                voucherToEdit = await _context.Vouchers.Include(o => o.Orders).FirstOrDefaultAsync(x => x.Id == id && (string.IsNullOrEmpty(userId) || x.UserId == userId));
-            }
+            Voucher? voucherToEdit = await _context.Vouchers.Include(o => o.Orders).FirstOrDefaultAsync(x => x.Id == id && (string.IsNullOrEmpty(userId) || x.UserId == userId));
             if (voucherToEdit == null)
             {
                 return new VoucherDto()
@@ -115,6 +111,7 @@ namespace VoucherManager.Repositories
                 Id = v.Id,
                 Customer = v.Customer,
                 Date = v.Date,
+                UserName = v.User.UserName,
                 Orders = v.Orders.Select(o => new OrderDto
                 {
                     Item = o.Item,

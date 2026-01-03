@@ -16,10 +16,10 @@
         </thead>
         <tbody>
             <!-- Voucher rows will be inserted dynamically using JS -->
-            <ng-container *ngFor="let voucher of vouchers; let i = index">
+            <ng-container *ngFor="let voucher of this.vouchers; let i = index">
                 <tr>
                     <td>{{i + 1}}</td>
-                    <td>{{voucher.date}}</td>
+                    <td>{{voucher.date | dateFormat}}</td>
                     <td>{{voucher.customer}}</td>
                     <td class="text-end">
                         <!-- Expand/collapse button -->
@@ -55,7 +55,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <ng-container *ngFor="let order of voucher.orders">
+                                    <ng-container *ngFor="let order of this.voucher.orders">
                                         <tr>
                                             <td>{{order.item}}</td>
                                             <td>{{order.quantity}}</td>

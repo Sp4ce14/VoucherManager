@@ -40,7 +40,7 @@ namespace VoucherManager.Controllers
                 return BadRequest();
             }
             var userRole = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
-            string? userId = null;
+            string? userId = "";
             if (userRole == "user")
             {
                 userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;

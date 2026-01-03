@@ -6,7 +6,7 @@ import { ShowVouchersComponent } from './show-vouchers/show-vouchers.component';
 
 const routes: Routes = [
   {path: 'show-vouchers', component: ShowVouchersComponent},
-  {path: 'add-voucher', component: AddVoucherComponent},
+  {path: 'add-voucher', component: AddVoucherComponent, data: {role: 'admin'}},
   {path: 'edit-voucher/:id', component: EditVoucherComponent},
   {path: '', redirectTo: 'show-vouchers', pathMatch: 'full'}
 ];

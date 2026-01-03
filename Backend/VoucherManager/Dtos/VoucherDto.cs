@@ -10,6 +10,7 @@ namespace VoucherManager.Dtos
         public string? Customer { get; set; }
         [Required]
         public  DateTime Date { get; set; }
+        public string? UserName { get; set; }
 
         public ICollection<OrderDto>? Orders { get; set; }
         public string? Error { get; set; }

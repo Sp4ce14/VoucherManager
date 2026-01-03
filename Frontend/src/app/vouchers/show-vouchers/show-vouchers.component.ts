@@ -12,7 +12,7 @@ export class ShowVouchersComponent implements OnInit {
 
   public vouchers: VoucherModel[];
   constructor(private voucherService: VoucherService, private router: Router) { 
-    this.voucherService.getVouchers().subscribe(vouchers => this.vouchers = vouchers);
+    this.voucherService.getVouchers().subscribe(vouchers => {this.vouchers = vouchers; console.log(vouchers)});
   }
 
   ngOnInit(): void {

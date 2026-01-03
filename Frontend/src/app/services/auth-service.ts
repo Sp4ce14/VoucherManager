@@ -20,11 +20,11 @@ export class AuthService {
   public roles$ = this.roleSubject.asObservable();
 
   public login(loginDetails: LoginModel): Observable<any> {
-    return this.http.post(this.baseUrl + "Auth/Login", loginDetails, {withCredentials: true});
+    return this.http.post(this.baseUrl + "Auth/Login", loginDetails, { withCredentials: true });
   }
 
   public signUp(signUpDetails: SignupModel): Observable<any> {
-    return this.http.post(this.baseUrl + "Auth/SignUp", signUpDetails, {withCredentials: true});
+    return this.http.post(this.baseUrl + "Auth/SignUp", signUpDetails, { withCredentials: true });
   }
 
   public setToken(token: string): void {
@@ -32,29 +32,42 @@ export class AuthService {
     this.loadRoles();
   }
   public logOut(): void {
-    localStorage.removeItem("token");
-    this.http.get(this.baseUrl + "Auth/Logout", {withCredentials: true});
-    this.loadRoles();
-    this.router.navigate(['/login']);
-    alert("You have been logged out, Please Login again.");
+    this.http.get(this.baseUrl + "Auth/Logout", { withCredentials: true }).subscribe(x => {
+      localStorage.removeItem("token");
+      this.loadRoles();
+      this.router.navigate(['/login']).then(() => {
+        setTimeout(() => {
+          alert("You have been logged out, Please Login again.");
+        }, 0);
+      }
+      );
+    }
+    );
   }
 
   private loadRoles(): void {
     let token = localStorage.getItem('token');
     if (token) {
-      this.roleSubject.next(jwtDecode<jwtModel>(token).roles || []);
+      console.log(jwtDecode<jwtModel>(token));
+      this.roleSubject.next(jwtDecode<jwtModel>(token).role || []);
     }
     else {
       this.roleSubject.next([]);
     }
   }
+
+  public isLoggedIn(): boolean {
+    let token = localStorage.getItem('token');
+    return token != null;
+  }
+
   public refreshReq(): Observable<any> {
-    return this.http.post(this.baseUrl + "Auth/Refresh", {token: this.getToken()}, { withCredentials: true })
+    return this.http.post(this.baseUrl + "Auth/Refresh", { token: this.getToken() }, { withCredentials: true })
   }
 
   public getToken(): string {
     var token = localStorage.getItem('token');
-    return token != null ?  token : '';
+    return token != null ? token : '';
   }
 
   public hasRole(role: string): boolean {

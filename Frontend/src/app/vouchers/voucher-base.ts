@@ -33,13 +33,12 @@ export abstract class VoucherBase implements OnInit {
   formInit(): void {
 
   }
-
   public addItem(): void {
     if (this._item?.value && this._quantity?.value && this._price?.value) {
       this.items.push({
         item: this._item.value,
-        quantity: this._quantity.value,
-        price: this._price.value
+        quantity: Number(this._quantity.value),
+        price: Number(this._price.value)
       })
       this._item.reset();
       this._quantity.reset();
@@ -59,8 +58,8 @@ export abstract class VoucherBase implements OnInit {
 
   public updateItem(): void {
     this.items[this.indexForUpdatingItem].item = this._item?.value;
-    this.items[this.indexForUpdatingItem].quantity = this._quantity?.value;
-    this.items[this.indexForUpdatingItem].price = this._price?.value;
+    this.items[this.indexForUpdatingItem].quantity = Number(this._quantity?.value);
+    this.items[this.indexForUpdatingItem].price = Number(this._price?.value);
     this.editPressed = false;
     this._item?.reset();
     this._quantity?.reset();
