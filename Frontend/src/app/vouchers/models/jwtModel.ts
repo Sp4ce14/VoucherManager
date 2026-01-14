@@ -1,5 +1,5 @@
 export interface jwtModel{
-    username: string,
+    unique_name: string,
     exp: number,
     role: string[]
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth-service';
 
 @Component({
@@ -14,7 +15,7 @@ export class SignupComponent implements OnInit {
   public _password: AbstractControl | null;
   public _confirmPassword: AbstractControl | null;
   public validationErr: string;
-  constructor(private _formbuilder: FormBuilder, private authService: AuthService) {}
+  constructor(private _formbuilder: FormBuilder, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.signUpForm = this._formbuilder.group(
@@ -60,7 +61,10 @@ export class SignupComponent implements OnInit {
     if (!this._password?.errors && !this._userName?.errors && !this._confirmPassword?.errors && !this._email?.errors && this._confirmPassword != this._password)
     {
       this.authService.signUp(this.signUpForm.value).subscribe({
-      next: res => {this.authService.setToken(res.token); console.log(res.token);},
+      next: res => {
+        this.authService.setToken(res.token);
+         this.router.navigate(['/']);
+        },
       error: err => {this.validationErr = err.error; console.log(err.error)}
     });
     }

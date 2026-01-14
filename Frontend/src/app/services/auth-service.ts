@@ -16,6 +16,7 @@ export class AuthService {
   constructor(private http: HttpClient, public router: Router) {
     this.loadRoles();
   }
+  public userName: string;
   private roleSubject = new BehaviorSubject<string[]>([]);
   public roles$ = this.roleSubject.asObservable();
 
@@ -58,6 +59,8 @@ export class AuthService {
     if (token) {
       try {
         const decoded = jwtDecode<jwtModel>(token);
+        console.log(decoded);
+        this.userName = decoded.unique_name;
         this.roleSubject.next(decoded.role);
         this.loggedInSubject.next(true);  // Token exists, user is logged in
       } catch (e) {
@@ -80,4 +83,5 @@ export class AuthService {
     var token = localStorage.getItem('token');
     return token != null ? token : '';
   }
-}
+  }
+

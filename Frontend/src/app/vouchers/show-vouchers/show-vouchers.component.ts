@@ -14,15 +14,13 @@ export class ShowVouchersComponent implements OnInit {
 
   public isAdmin: boolean
   public vouchers: VoucherModel[]
-  public userName: string | undefined
+  public userName: string = this.auth.userName;
   constructor(private voucherService: VoucherService, private router: Router, private auth: AuthService) {
   }
 
   ngOnInit(): void {
     this.voucherService.getVouchers().subscribe(vouchers => {
       this.vouchers = vouchers;
-      this.userName = this.vouchers[0].userName;
-      console.log(vouchers);
     });
     this.auth.roles$.subscribe(roles => {
       this.isAdmin = roles.includes("admin");
