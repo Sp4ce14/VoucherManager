@@ -55,7 +55,8 @@ export class EditVoucherComponent extends VoucherBase {
           date: this.voucherForm.get('date')?.value,
           customer: this.voucherForm.get('customer')?.value,
           orders: this.items,
-          expanded: this.currentVoucher.expanded
+          expanded: this.currentVoucher.expanded,
+          userName: undefined
         }
         this.voucherService.editVoucher(updatedVoucher, this.voucherId).subscribe(
           {

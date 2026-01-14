@@ -1,4 +1,13 @@
-<div class="text-end">
+<div *ngIf="isAdmin; then forAdmin else forUser">
+    
+</div>
+<ng-template #forUser>
+    User Logged in: {{this.userName}}
+</ng-template>
+<ng-template #forAdmin>
+    <p>Admin is logged in</p>
+</ng-template>
+<div *ngIf="!isAdmin" class="text-end">
     <!-- "Add New" button aligned to the right -->
     <a class="btn btn-success" routerLink="/vouchers/add-voucher">Add New</a>
 </div>
@@ -9,6 +18,7 @@
         <thead>
             <tr>
                 <th>Voucher No.</th>
+                <th *ngIf="isAdmin">User</th>
                 <th>Date</th>
                 <th>Customer</th>
                 <th></th> <!-- Empty header for action buttons -->
@@ -19,6 +29,7 @@
             <ng-container *ngFor="let voucher of this.vouchers; let i = index">
                 <tr>
                     <td>{{i + 1}}</td>
+                    <td *ngIf="isAdmin">{{voucher.userName}}</td>
                     <td>{{voucher.date | dateFormat}}</td>
                     <td>{{voucher.customer}}</td>
                     <td class="text-end">
@@ -27,23 +38,23 @@
 
                         </div>
                         <ng-template #view>
-                            <div class="btn btn-success w-25" (click)="toggleVoucher(i)">
+                            <div class="btn btn-success" (click)="toggleVoucher(i)">
                                 <i class="bi bi-arrow-right-short"></i> View
                             </div>
                         </ng-template>
                         <ng-template #collapse>
-                            <div  class="btn btn-success w-25" (click)="toggleVoucher(i)">
+                            <div  class="btn btn-success" (click)="toggleVoucher(i)">
                                 <i class="bi bi-arrow-down-short"></i> View
                             </div>
                         </ng-template>
                         <!-- Edit button -->
-                        <div class="edit-btn btn btn-primary w-25" (click)="editVoucher(i)">Edit</div>
+                        <div class="edit-btn btn btn-primary" (click)="editVoucher(i)">Edit</div>
                         <!-- Delete button -->
-                        <div class="del-btn btn btn-danger w-25" (click)="deleteVoucher(i)">Delete</div>
+                        <div *ngIf="isAdmin" class="del-btn btn btn-danger" (click)="deleteVoucher(i)">Delete</div>
                     </td>
                 </tr>
                 <tr *ngIf="voucher.expanded">
-                    <td colspan="4"> <!-- Span all 4 columns -->
+                    <td colspan="5"> <!-- Span all 5 columns (includes User column) -->
                         <div class="details-container">
                             <table class="table table-sm table-striped">
                                 <thead class="sticky-top"> <!-- keeps header visible while scrolling -->
@@ -55,7 +66,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <ng-container *ngFor="let order of this.voucher.orders">
+                                    <ng-container *ngFor="let order of voucher.orders">
                                         <tr>
                                             <td>{{order.item}}</td>
                                             <td>{{order.quantity}}</td>

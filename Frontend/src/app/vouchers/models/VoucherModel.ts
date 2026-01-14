@@ -8,6 +8,8 @@ export interface VoucherModel {
     id: number,
     // date property of type string
     date: string,
+    // username property of type string
+    userName: string | undefined,
     // customer property of type string
     customer: string,
     // orders property of type array of OrderModel

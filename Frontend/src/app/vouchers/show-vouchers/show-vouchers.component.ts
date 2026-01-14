@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { VoucherService } from '../../services/voucher-service';
 import { VoucherModel } from '../models/VoucherModel';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth-service';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-show-vouchers',
@@ -10,13 +12,21 @@ import { Router } from '@angular/router';
 })
 export class ShowVouchersComponent implements OnInit {
 
-  public vouchers: VoucherModel[];
-  constructor(private voucherService: VoucherService, private router: Router) { 
-    this.voucherService.getVouchers().subscribe(vouchers => {this.vouchers = vouchers; console.log(vouchers)});
+  public isAdmin: boolean
+  public vouchers: VoucherModel[]
+  public userName: string | undefined
+  constructor(private voucherService: VoucherService, private router: Router, private auth: AuthService) {
   }
 
   ngOnInit(): void {
-    
+    this.voucherService.getVouchers().subscribe(vouchers => {
+      this.vouchers = vouchers;
+      this.userName = this.vouchers[0].userName;
+      console.log(vouchers);
+    });
+    this.auth.roles$.subscribe(roles => {
+      this.isAdmin = roles.includes("admin");
+    })
   }
 
   public toggleVoucher(index: number): void {

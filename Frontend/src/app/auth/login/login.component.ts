@@ -17,13 +17,13 @@ export class LoginComponent implements OnInit {
   // Public form group for login
   public loginForm: FormGroup;
   // Abstract control for username
-  public _userName: AbstractControl | null; 
+  public _userName: AbstractControl | null;
   // Abstract control for password
   public _password: AbstractControl | null;
   // Validation error message
   public validationErr: string;
   // Constructor to inject dependencies
-  constructor(private _formbuilder: FormBuilder, private authService: AuthService, private router: Router) {}
+  constructor(private _formbuilder: FormBuilder, private authService: AuthService, private router: Router) { }
   // Implement ngOnInit
   ngOnInit(): void {
     // Create the form group
@@ -39,33 +39,33 @@ export class LoginComponent implements OnInit {
     // Subscribe to form value changes
     this.loginForm.valueChanges.subscribe(x => {
       // Check for validation errors
-      if (this._password?.errors && this._userName?.errors && (this._userName?.dirty || this._password?.dirty))
-      {
+      if (this._password?.errors && this._userName?.errors && (this._userName?.dirty || this._password?.dirty)) {
         this.validationErr = "Both fields are required.";
       }
-      else if (this._password?.errors && this._password?.dirty)
-      {
+      else if (this._password?.errors && this._password?.dirty) {
         this.validationErr = "Password is required.";
       }
-      else if (this._userName?.errors && this._userName?.dirty)
-      {
+      else if (this._userName?.errors && this._userName?.dirty) {
         this.validationErr = "User Name is required.";
       }
       else {
         this.validationErr = "";
       }
-  });
+    });
   }
   // Public login method
   public login(): void {
     // If no errors
-    if (!this._userName?.errors && !this._password?.errors)
-    {
+    if (!this._userName?.errors && !this._password?.errors) {
       // Call login service
       this.authService.login(this.loginForm.value).subscribe({
-      next: res => {this.authService.setToken(res.token); console.log(res); this.router.navigate([''])}, // On success, set token, log, navigate
-      error: err => {this.validationErr = err.error} // On error, set validation error
-    });
+        next: res => {
+          this.authService.setToken(res.token);
+          console.log(res);
+          this.router.navigate(['']);
+        }, // On success, set token, log, navigate
+        error: err => { this.validationErr = err.error } // On error, set validation error
+      });
     }
     else {
       this.validationErr = "Please Enter some details.";

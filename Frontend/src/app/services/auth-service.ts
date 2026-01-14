@@ -19,6 +19,9 @@ export class AuthService {
   private roleSubject = new BehaviorSubject<string[]>([]);
   public roles$ = this.roleSubject.asObservable();
 
+  public loggedInSubject = new BehaviorSubject<boolean>(false);
+  public isLoggedin$ = this.loggedInSubject.asObservable();
+
   public login(loginDetails: LoginModel): Observable<any> {
     return this.http.post(this.baseUrl + "Auth/Login", loginDetails, { withCredentials: true });
   }
@@ -26,14 +29,19 @@ export class AuthService {
   public signUp(signUpDetails: SignupModel): Observable<any> {
     return this.http.post(this.baseUrl + "Auth/SignUp", signUpDetails, { withCredentials: true });
   }
-
+  public checkLogin(): boolean{
+    console.log(this.loggedInSubject.value);
+    return this.loggedInSubject.value;
+  }
   public setToken(token: string): void {
     localStorage.setItem("token", token);
+    this.loggedInSubject.next(true);
     this.loadRoles();
   }
   public logOut(): void {
     this.http.get(this.baseUrl + "Auth/Logout", { withCredentials: true }).subscribe(x => {
       localStorage.removeItem("token");
+      this.loggedInSubject.next(false)
       this.loadRoles();
       this.router.navigate(['/login']).then(() => {
         setTimeout(() => {
@@ -46,19 +54,22 @@ export class AuthService {
   }
 
   private loadRoles(): void {
-    let token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
     if (token) {
-      console.log(jwtDecode<jwtModel>(token));
-      this.roleSubject.next(jwtDecode<jwtModel>(token).role || []);
+      try {
+        const decoded = jwtDecode<jwtModel>(token);
+        this.roleSubject.next(decoded.role);
+        this.loggedInSubject.next(true);  // Token exists, user is logged in
+      } catch (e) {
+        console.error('Failed to decode token', e);
+        this.roleSubject.next([]);
+        this.logOut();
+      }
     }
     else {
       this.roleSubject.next([]);
+      this.loggedInSubject.next(false);  // No token, user is logged out
     }
-  }
-
-  public isLoggedIn(): boolean {
-    let token = localStorage.getItem('token');
-    return token != null;
   }
 
   public refreshReq(): Observable<any> {
@@ -68,9 +79,5 @@ export class AuthService {
   public getToken(): string {
     var token = localStorage.getItem('token');
     return token != null ? token : '';
-  }
-
-  public hasRole(role: string): boolean {
-    return this.roleSubject.value.includes(role);
   }
 }
